@@ -1,0 +1,36 @@
+version: "2"
+
+services:
+  web:
+    build:
+      context: ./odoo/
+    container_name: odoo_16_server
+    command: -- --dev=reload
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    volumes:
+      - ./odoo/config:/etc/odoo:rw
+      - ./odoo/config/odoo.conf:/etc/odoo/odoo.conf
+      - ./odoo/addons:/mnt/extra-addons:rw # Uncomment this line if you have custom addons to add
+    # logging:
+    #   options:
+    #     max-size: "10m"
+    #     max-file: "3"
+  db:
+    image: postgres:12
+    container_name: postgres_12_server
+    volumes:
+      - ./odoo/config:/etc/odoo/db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    # logging:
+    #   options:
+    #     max-size: "10m"
+    #     max-file: "3"
+
+
